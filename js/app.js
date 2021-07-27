@@ -15,10 +15,9 @@ function eventListeners() {
     document.addEventListener('DOMContentLoaded', () => {
         tweets = JSON.parse(localStorage.getItem('tweets')) || [];
         crearHTML();
-        console.log(tweets);
     });
-}
 
+}
 
 //Funciones
 function agregarTweets(e) {
@@ -40,20 +39,19 @@ function agregarTweets(e) {
     formulario.reset();
 }
 
-//Muestra mensaje de error
+//Muestra mensaje de error por 2 segundos
 function mostrarError(m) {
     const mensaejError = document.createElement('p');
-        mensaejError.textContent = m;
-        mensaejError.classList.add('error');
-        mensaejError.style.fontSize = '1rem';
-
-        const contenido = document.querySelector('#contenido');
-        contenido.appendChild(mensaejError);
-
-        //elimina alerta despues de 2 segundos
-        setTimeout( () => {
-            mensaejError.remove();
-        },2000) 
+    mensaejError.textContent = m;
+    mensaejError.classList.add('error');
+    mensaejError.style.fontSize = '1.2rem';
+    mensaejError.style.margin = '2.5rem 0';
+    mensaejError.style.borderRadius = '4px';
+    formulario.appendChild(mensaejError);
+        
+    setTimeout( () => {
+        mensaejError.remove();
+    },2000);    
 }
 
 //Muestra listado de tweets en el HTML
@@ -61,12 +59,21 @@ function crearHTML() {
     limpiarTweets();
     if(tweets.length > 0) {
         tweets.forEach( tweet => {
+            const btnEliminar = document.createElement('A');
+            btnEliminar.innerHTML = 'X';
+            btnEliminar.classList.add('borrar-tweet');
+
+            btnEliminar.onclick = () => {
+                eliminarTweet(tweet.id);
+            }
+
             const li = document.createElement('li');
             li.innerText = tweet.tweet;
+            li.appendChild(btnEliminar);
             listaTweets.appendChild(li);
         });
     }
-
+    
     sincronizarStorage();
 }
 
@@ -80,4 +87,10 @@ function limpiarTweets() {
 //Agrega los tweets actuales al local storage
 function sincronizarStorage() {
     localStorage.setItem('tweets', JSON.stringify(tweets));
+}
+
+//Elimina un tweet
+function eliminarTweet(id) {
+    tweets = tweets.filter(tweet => tweet.id !== id);
+    crearHTML();
 }
